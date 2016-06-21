@@ -1,0 +1,22 @@
+{
+  "name": "redis-simple-access",
+  "version": "0.0.1",
+  "description": "Redis - Simple access module",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RodrigoSampaio/redis-simple-access.git"
+  },
+  "author": "Rodrigo Sampaio",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/RodrigoSampaio/redis-simple-access/issues"
+  },
+  "homepage": "https://github.com/RodrigoSampaio/redis-simple-access#readme",
+  "dependencies": {
+    "redis": "^2.6.2"
+  }
+}
