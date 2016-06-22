@@ -43,7 +43,8 @@ let simpleRedis = function(config){
                     if (!err && ttl){
                         conn.expire(key, ttl);
                     }
-                    done(err, res);
+					if (done)
+						done(err, res);
                 });
             }
         });
