@@ -2,51 +2,51 @@
 
 let redis = require('redis');
 
-let simpleRedis = function(config){
-    
+let simpleRedis = function (config) {
+
     let _connection;
-    let _connect = function _connect(done){
-        if (!_connection){
-            _connection = redis.createClient(config.port, config.host);
-            if (config.pass){
-                _connection.auth(config.pass);
-            }
-            _connection.on('connect', function(err){
-                done(err, _connection);
-            })
-        } else {
+    let _connect = function (done) {
+        if (_connection) {
             done(null, _connection);
+            return;
         }
+        _connection = redis.createClient(config.port, config.host);
+        if (config.pass) {
+            _connection.auth(config.pass);
+        }
+        _connection.on('connect', function (err) {
+            done(err, _connection);
+        });
     };
 
-    let _get = function _get(key, done){
-        _connect(function(err, conn){
-            if (err){
-                console.log(err);
-            }else{
-                conn.get(key, function(err, value){
-                    if (err){
-                        throw err;
-                    }
-                    done(err, value);
-                });
+    let _get = function (key, done) {
+        _connect(function (err, conn) {
+            if (err) {
+                done(err);
+                return;
             }
+            conn.get(key, function (err, value) {
+                done(err, value);
+            });
         });
     }
 
-    let _set = function _set(key, value, ttl, done) {
-        _connect(function(err, conn){
-            if (err){
-                throw err;
-            } else { 
-                conn.set(key, value, function(err, res){
-                    if (!err && ttl){
-                        conn.expire(key, ttl);
-                    }
-					if (done)
-						done(err, res);
-                });
+    let _set = function (key, value, ttl, done) {
+        _connect(function (err, conn) {
+            if (err) {
+                done(err);
+                return;
             }
+            conn.set(key, value, function (err, res) {
+                if (err) {
+                    done(err);
+                    return;
+                }
+                if (ttl) {
+                    conn.expire(key, ttl);
+                }
+                done(null, res);
+            });
         });
     };
 
