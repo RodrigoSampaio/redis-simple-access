@@ -1,5 +1,6 @@
 'use strict'
 
+let async = require('async');
 let redis = require('redis');
 
 let simpleRedis = function (config) {
@@ -29,7 +30,7 @@ let simpleRedis = function (config) {
                 done(err, value);
             });
         });
-    }
+    };
 
     let _set = function (key, value, ttl, done) {
         _connect(function (err, conn) {
@@ -50,6 +51,34 @@ let simpleRedis = function (config) {
         });
     };
 
+    let _getAll = (key, done) => {
+        _connect((error, conn) => {
+            if (error) {
+                return done(error);
+            }
+            conn.send_command('keys', [key], (error, keys) => {
+                if (error) {
+                    return done(error);
+                }
+                let values = [];
+                async.each(keys, (key, callback) => {
+                    conn.get(key, (error, value) => {
+                        if (error) {
+                            return callback(error);
+                        }
+                        values.push(value);
+                        return callback();
+                    });
+                }, (error) => {
+                    if (error) {
+                        return done(error);
+                    }
+                    return done(null, values);
+                });
+            });
+        });
+    }
+
     let _dispose = function () {
         _connection.quit();
         _connection = null;
@@ -58,6 +87,7 @@ let simpleRedis = function (config) {
     return {
         get: _get,
         set: _set,
+        getAll: _getAll,
         dispose: _dispose
     };
 
