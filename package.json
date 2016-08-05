@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/RodrigoSampaio/redis-simple-access#readme",
   "dependencies": {
+    "async": "^2.0.1",
     "redis": "^2.6.2"
   }
 }
